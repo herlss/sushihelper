@@ -160,17 +160,19 @@
         }
 
         if (bosses.includes(name.toLowerCase())) {
-            const audio = new Audio("dontplay.mp3")
+            var audio = new Audio("dontplay.mp3");
             audio.play();
 
             setTimeout(() => {
-                image_confetti("teteu.jpeg")
+                image_confetti("teteu.jpeg");
             }, 3200);
 
-            document.querySelector("main").style.display = "none"
+            document.querySelector("main").style.display = "none";
             setTimeout(() => {
+                audio = new Audio("cleide.mp3");
+                audio.play();
                 document.querySelector("main").style.display = "flex"
-            }, 18000);
+            }, 18500);
         }
  
         const playerDiv = e.target.closest('.player');
