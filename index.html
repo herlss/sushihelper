@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sushi Helper</title>
+    <link rel="shortcut icon" href="sushi.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        main {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            row-gap: 30px;
+            align-items: center;
+        }
+
+        #players {
+            display: flex;
+            flex-direction: column;
+            row-gap: 50px;
+        }
+
+        .player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            row-gap: 20px;
+            width: fit-content;
+        }
+
+        .player-name {
+            font-size: 20px;
+            cursor: pointer;
+            height: fit-content;
+            margin: auto;
+        }
+
+        .player-controls {
+            display: flex;
+            column-gap: 50px;
+            position: relative;
+        }
+
+        .player-points {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn {
+            height: 40px; width: fit-content;
+            padding: 0 20px;
+        }
+
+        .player-points {
+            font-size: 18px;
+        }
+
+        .game {
+            display: flex;
+            column-gap: 25px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Sushi Helper</h1>
+        <div id="players">
+            <div class="player">
+                <input type="text" class="name-input" placeholder="Novo Jogador">
+
+                <div class="game">
+                    <div class="player-controls">
+                        <button type="button" class="btn btn-primary minors">-</button>
+                        <p class="player-points">1</p>
+                        <button type="button" class="btn btn-primary plus">+</button>
+                    </div>
+                    <button type="button" class="btn btn-danger">Remover</button>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-success">Novo</button>
+    </main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const players_wrapper = document.getElementById('players');
+    const create = document.querySelector('.btn-success');
+
+    function createPlayerElement(name = '') {
+        const playerDiv = document.createElement('div');
+        playerDiv.classList.add('player');
+
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.classList.add('name-input');
+        nameInput.placeholder = 'Novo Jogador';
+        nameInput.value = name;
+        nameInput.autofocus = true;
+        nameInput.addEventListener('focusout', onFocusOut);
+
+        const playerName = document.createElement('p');
+        playerName.classList.add('player-name');
+        playerName.textContent = name;
+        playerName.addEventListener('click', onPlayerNameClick);
+
+        const gameDiv = document.createElement('div');
+        gameDiv.classList.add('game');
+
+        const controlsDiv = document.createElement('div');
+        controlsDiv.classList.add('player-controls');
+
+        const minusButton = document.createElement('button');
+        minusButton.type = 'button';
+        minusButton.classList.add('btn', 'btn-primary', 'minors');
+        minusButton.textContent = '-';
+        minusButton.addEventListener('click', onMinusButtonClick);
+
+        const pointsParagraph = document.createElement('p');
+        pointsParagraph.classList.add('player-points');
+        pointsParagraph.textContent = '1';
+
+        const plusButton = document.createElement('button');
+        plusButton.type = 'button';
+        plusButton.classList.add('btn', 'btn-primary', 'plus');
+        plusButton.textContent = '+';
+        plusButton.addEventListener('click', onPlusButtonClick);
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.classList.add('btn', 'btn-danger');
+        removeButton.textContent = 'Remover';
+        removeButton.addEventListener('click', () => playerDiv.remove());
+
+        controlsDiv.append(minusButton, pointsParagraph, plusButton);
+        gameDiv.append(controlsDiv, removeButton);
+
+        playerDiv.append(nameInput, gameDiv);
+
+        return playerDiv;
+    }
+
+    function onFocusOut(e) {
+        const name = e.target.value;
+
+        if (name.length === 0) {
+            return;
+        }
+
+        const playerDiv = e.target.closest('.player');
+        const playerName = document.createElement('p');
+        playerName.classList.add('player-name');
+        playerName.textContent = name;
+        playerName.addEventListener('click', onPlayerNameClick);
+
+        e.target.remove();
+        playerDiv.insertAdjacentElement('afterbegin', playerName);
+    }
+
+    function onPlayerNameClick(e) {
+        const playerDiv = e.target.closest('.player');
+
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.classList.add('name-input');
+        nameInput.placeholder = 'Novo Jogador';
+        nameInput.value = e.target.textContent;
+        nameInput.autofocus = true;
+        nameInput.addEventListener('focusout', onFocusOut);
+
+        e.target.remove();
+        playerDiv.insertAdjacentElement('afterbegin', nameInput);
+    }
+
+    function onPlusButtonClick(e) {
+        const playerDiv = e.target.closest('.player');
+        const pointsParagraph = playerDiv.querySelector('.player-points');
+        const minorsButton = playerDiv.querySelector('.minors');
+
+        let points = parseInt(pointsParagraph.textContent);
+        points += 1;
+
+        pointsParagraph.textContent = points;
+
+        if (points > 0) {
+            minorsButton.classList.remove('btn-secondary');
+            minorsButton.classList.add('btn-primary');
+        }
+    }
+
+    function onMinusButtonClick(e) {
+        const playerDiv = e.target.closest('.player');
+        const pointsParagraph = playerDiv.querySelector('.player-points');
+
+        let points = parseInt(pointsParagraph.textContent);
+
+        if (points > 0) {
+            points -= 1;
+            pointsParagraph.textContent = points;
+
+            if (points === 0) {
+                e.target.classList.remove('btn-primary');
+                e.target.classList.add('btn-secondary');
+            }
+        }
+    }
+
+    create.addEventListener('click', () => {
+        players_wrapper.appendChild(createPlayerElement());
+    });
+
+    document.querySelectorAll('.player').forEach(player => {
+        const nameInput = player.querySelector('.name-input');
+        const minusButton = player.querySelector('.minors');
+        const plusButton = player.querySelector('.plus');
+
+        nameInput.addEventListener('focusout', onFocusOut);
+        minusButton.addEventListener('click', onMinusButtonClick);
+        plusButton.addEventListener('click', onPlusButtonClick);
+    });
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
