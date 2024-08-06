@@ -79,7 +79,8 @@
                         <p class="player-points">1</p>
                         <button type="button" class="btn btn-primary plus">+</button>
                     </div>
-                    <button type="button" class="btn btn-danger">Remover</button>
+                    <button type="button" class="btn btn-secondary reset"><img src="arrow-counterclockwise.svg" alt=""></button>
+                    <button type="button" class="btn btn-danger"><img src="trash-fill.svg" alt=""></button>
                 </div>
             </div>
         </div>
@@ -129,14 +130,20 @@
         plusButton.textContent = '+';
         plusButton.addEventListener('click', onPlusButtonClick);
 
+        const resetButton = document.createElement('button');
+        resetButton.type = 'button';
+        resetButton.classList.add('btn', 'btn-secondary', 'reset');
+        resetButton.innerHTML = '<img src="arrow-counterclockwise.svg" alt="">';
+        resetButton.addEventListener('click', onResetButtonClick);
+
         const removeButton = document.createElement('button');
         removeButton.type = 'button';
         removeButton.classList.add('btn', 'btn-danger');
-        removeButton.textContent = 'Remover';
+        removeButton.innerHTML = '<img src="trash-fill.svg" alt="">';
         removeButton.addEventListener('click', () => playerDiv.remove());
 
         controlsDiv.append(minusButton, pointsParagraph, plusButton);
-        gameDiv.append(controlsDiv, removeButton);
+        gameDiv.append(controlsDiv, resetButton, removeButton);
 
         playerDiv.append(nameInput, gameDiv);
 
@@ -208,6 +215,17 @@
         }
     }
 
+    function onResetButtonClick(e) {
+        const playerDiv = e.target.closest('.player');
+        const pointsParagraph = playerDiv.querySelector('.player-points');
+        const minorsButton = playerDiv.querySelector('.minors');
+
+        pointsParagraph.textContent = '0';
+
+        minorsButton.classList.remove('btn-primary');
+        minorsButton.classList.add('btn-secondary');
+    }
+
     create.addEventListener('click', () => {
         players_wrapper.appendChild(createPlayerElement());
     });
@@ -216,10 +234,12 @@
         const nameInput = player.querySelector('.name-input');
         const minusButton = player.querySelector('.minors');
         const plusButton = player.querySelector('.plus');
+        const resetButton = player.querySelector('.reset');
 
         nameInput.addEventListener('focusout', onFocusOut);
         minusButton.addEventListener('click', onMinusButtonClick);
         plusButton.addEventListener('click', onPlusButtonClick);
+        resetButton.addEventListener('click', onResetButtonClick);
     });
 });
 </script>
